@@ -1,0 +1,16 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  labels:
+    team: backend
+spec:
+  template:
+  selector:
+    metadata:
+    spec:
+      containers:
+      - name: nginx
+      envFrom:
+      - configMapRef:
+          name: config

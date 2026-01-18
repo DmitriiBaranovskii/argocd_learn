@@ -1,0 +1,70 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: dev
+
+resources:
+  - ../../base
+  - namespace.yaml
+
+namePrefix: dev-
+
+components:
+  - ../../components/debug-tools
+
+replicas:
+  - name: nginx-deployment
+    count: 1
+
+images:
+  - name: nginx
+    newTag: "1.27-alpine"
+
+labels:
+  - pairs:
+      environment: dev
+    includeTemplates: true
+    includeSelectors: true
+
+# patches:
+#   - path: patch-deployment.yaml
+#     target:
+#       kind: Deployment
+#       name: nginx-deployment
+      # labelSelector: "environment=dev"
+
+configMapGenerator:
+  - name: config
+    literals:
+    - DEBUG='true'
+    - LOG_LEVEL=debug
+    - ENVIRONMENT=development
+
+secretGenerator:
+  - name: db
+    literals:
+      - DB_HOST=dev-postgres
+      - DB_USER=dev_user
+      - DB_PASSWORD=dev_password123
+
+replacements:
+  - source:
+      kind: Service
+      name: nginx-service
+      fieldPath: metadata.name
+    targets:
+      - select:
+          kind: Ingress
+        fieldPaths:
+        - spec.rules.[host=app.example.com].http.paths.[path=/].backend.service.name
+  - source:
+      kind: ConfigMap
+      name: config
+      fieldPath: data.ENVIRONMENT
+    targets:
+      - select:
+          kind: Ingress
+        fieldPaths:
+          - metadata.annotations.environment
+        options:
+          create: true
