@@ -5,6 +5,7 @@ resources:
   - deployment.yaml
   - service.yaml
   - ingress.yaml
+  - presync-job.yaml
 
 commonAnnotations:
   app: nginx-app
