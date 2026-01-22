@@ -39,6 +39,9 @@ configMapGenerator:
     - DEBUG='true'
     - LOG_LEVEL=debug
     - ENVIRONMENT=development
+    options:
+      annotations:
+        argocd.argoproj.io/sync-wave: "-1"
 
 secretGenerator:
   - name: db
@@ -46,6 +49,9 @@ secretGenerator:
       - DB_HOST=dev-postgres
       - DB_USER=dev_user
       - DB_PASSWORD=dev_password123
+    options:
+      annotations:
+        argocd.argoproj.io/sync-wave: "-1"
 
 replacements:
   - source:
