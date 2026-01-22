@@ -68,3 +68,12 @@ replacements:
           - metadata.annotations.environment
         options:
           create: true
+  - sourceValue: "true"
+    targets:
+      - select:
+          kind: Ingress
+          name: nginx-ingress
+        fieldPaths:
+          - metadata.annotations.[argocd.argoproj.io/ignore-healthcheck]
+        options:
+          create: true
